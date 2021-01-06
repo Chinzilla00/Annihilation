@@ -85,6 +85,8 @@ namespace Annihilation.NPCs.Megnatar
         }
         private int Firelaser = 0;
         private int Teleports = 0;
+        private int timer = 150;
+        private int timer2 = 200;
         private bool DEARLORDFREAKOUTREMOVER = false; //This can break the code... Do not edit.
         private bool BulletHell = false; //Change to true; for a hard fight.
         private bool BulletHellHealthSet = false; //Once again... Do not edit.
@@ -97,7 +99,7 @@ namespace Annihilation.NPCs.Megnatar
                 {
                     npc.TargetClosest(false);
                     player = Main.player[npc.target];
-                    if (!player.active || player.dead)
+                    if (!player.active || player.dead || Main.dayTime)
                     {
                         npc.velocity = new Vector2(0f, 10f);
                         if (npc.timeLeft > 10)
@@ -185,7 +187,8 @@ namespace Annihilation.NPCs.Megnatar
                     npc.velocity.Y = (player.Center.Y - (float)(Main.rand.Next(290, 310)) - npc.Center.Y) / MoveCool;
                     npc.netUpdate = true;
                 }
-                if ((!BulletHell && Main.rand.Next(150) == 0) || (BulletHell && Main.rand.Next(15) == 0))
+                timer2--;
+                if ((!BulletHell && timer2 == 0) || (BulletHell && Main.rand.Next(15) == 0))
                 {
                     Projectile.NewProjectile(new Vector2(npc.Center.X + 40f, npc.Center.Y + 40f), new Vector2(10f, 10f), ModContent.ProjectileType<Darkflame>(), npc.damage / 3, 1);
                     Projectile.NewProjectile(new Vector2(npc.Center.X, npc.Center.Y + 40f), new Vector2(0, 10f), ModContent.ProjectileType<Darkflame>(), npc.damage / 3, 1);
@@ -203,10 +206,12 @@ namespace Annihilation.NPCs.Megnatar
                     {
                         Teleports++;
                     }
+                    timer2 = 200;
                 }
                 if (npc.localAI[0] == 1f)
                 {
-                    if ((!BulletHell && Main.rand.Next(150) == 0) || (BulletHell && Main.rand.Next(15) == 0))
+                    timer--;
+                    if ((!BulletHell && timer == 0) || (BulletHell && Main.rand.Next(15) == 0))
                     {
                         Projectile.NewProjectile(new Vector2(npc.Center.X, npc.Center.Y - 20f), new Vector2((float)(Main.rand.Next(-10, 10)), -10f), ModContent.ProjectileType<Darkflame2>(), npc.damage / 3, 1);
                         Projectile.NewProjectile(new Vector2(npc.Center.X, npc.Center.Y - 20f), new Vector2((float)(Main.rand.Next(-10, 10)), -10f), ModContent.ProjectileType<Darkflame2>(), npc.damage / 3, 1);
@@ -222,12 +227,15 @@ namespace Annihilation.NPCs.Megnatar
                                 Projectile.NewProjectile(new Vector2(npc.Center.X, npc.Center.Y - 20f), new Vector2((float)(Main.rand.Next(-10, 10)), -10f), ModContent.ProjectileType<Darkflame>(), npc.damage / 3, 1);
                             }
                         }
+                        timer = 150;
                     }
                     if (Teleports >= 2)
                     {
                         Teleports = 0;
-                        npc.velocity.X = (player.Center.X - npc.Center.X) / 40f;
-                        npc.velocity.Y = (player.Center.Y - npc.Center.Y) / 40f;
+                        float vectorx = player.Center.X - npc.Center.X;
+                        float vectory = player.Center.Y - npc.Center.Y;
+                        npc.velocity.X = (vectorx + vectorx) / 80f;
+                        npc.velocity.Y = (vectory + vectory) / 80f;
                     }
                 }
                 if (Vector2.Distance(Main.player[npc.target].position, npc.position) > 150f)

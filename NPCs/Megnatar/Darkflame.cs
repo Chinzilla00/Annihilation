@@ -29,9 +29,19 @@ namespace Annihilation.NPCs.Megnatar
             projectile.timeLeft = 600;
             projectile.penetrate = -1;
         }
+        private bool init = false;
         public override void AI()
         {
-            projectile.rotation = projectile.velocity.ToRotation();
+            if (init == false)
+            {
+                projectile.rotation = projectile.velocity.ToRotation();
+                init = true;
+            }
+            projectile.timeLeft--;
+            if (projectile.timeLeft <= 0)
+            {
+                projectile.Kill();
+            }
             if (++projectile.frameCounter >= 5)
             {
                 projectile.frameCounter = 0;
@@ -66,7 +76,6 @@ namespace Annihilation.NPCs.Megnatar
             projectile.Name = "Darkflame";
             projectile.width = 22;
             projectile.height = 10;
-            projectile.aiStyle = 68;
             projectile.damage = 26;
             projectile.friendly = false;
             projectile.hostile = true;
@@ -74,11 +83,23 @@ namespace Annihilation.NPCs.Megnatar
             projectile.tileCollide = true;
             projectile.timeLeft = 600;
             projectile.penetrate = -1;
-            aiType = ProjectileID.MolotovFire;
         }
+        private bool init = false;
         public override void AI()
         {
-            projectile.rotation = projectile.velocity.ToRotation();
+            if (init == false)
+            {
+                init = true;
+            }
+            else
+            {
+                projectile.rotation = projectile.velocity.ToRotation();
+            }
+            projectile.timeLeft--;
+            if (projectile.timeLeft <= 0)
+            {
+                projectile.Kill();
+            }
             if (++projectile.frameCounter >= 5)
             {
                 projectile.frameCounter = 0;
@@ -86,6 +107,18 @@ namespace Annihilation.NPCs.Megnatar
                 {
                     projectile.frame = 0;
                 }
+            }
+            if (projectile.velocity.Y < -5f)
+            {
+                projectile.velocity.Y *= 0.97f;
+            }
+            if (projectile.velocity.Y >= -5f && projectile.velocity.Y < 3f)
+            {
+                projectile.velocity.Y = 3f;
+            }
+            if (projectile.velocity.Y >= 3f)
+            {
+                projectile.velocity.Y *= 1.03f;
             }
         }
         public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)

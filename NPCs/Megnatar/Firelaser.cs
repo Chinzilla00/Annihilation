@@ -15,8 +15,8 @@ namespace Annihilation.NPCs.Megnatar
     {
         public override void SetDefaults()
         {
-            projectile.width = 18;
-            projectile.height = 8;
+            projectile.width = 8;
+            projectile.height = 18;
             projectile.damage = 26;
             projectile.friendly = false;
             projectile.hostile = true;
@@ -25,9 +25,19 @@ namespace Annihilation.NPCs.Megnatar
             projectile.timeLeft = 600;
             projectile.penetrate = -1;
         }
+        private bool init = false;
         public override void AI()
         {
-            projectile.rotation = projectile.velocity.ToRotation();
+            if (init == false)
+            {
+                projectile.rotation = projectile.velocity.ToRotation();
+                init = true;
+            }
+            projectile.timeLeft--;
+            if (projectile.timeLeft <= 0)
+            {
+                projectile.Kill();
+            }
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
